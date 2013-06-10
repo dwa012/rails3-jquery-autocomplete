@@ -51,8 +51,13 @@ module Rails3JQueryAutocomplete
           if term && !term.blank?
             #allow specifying fully qualified class name for model object
             class_name = options[:class_name] || object
-            items = get_autocomplete_items(:model => get_object(class_name), \
+            if options[:override_method].present? and !options[:override_method].nil?
+              items = get_object(class_name).send(options[:override_method], {:extra => params[:extra], :term => term, :options => options})
+            else
+              items = get_autocomplete_items(:model => get_object(class_name), \
               :options => options, :term => term, :method => method)
+            end
+
           else
             items = {}
           end
